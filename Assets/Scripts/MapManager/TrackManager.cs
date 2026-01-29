@@ -28,6 +28,8 @@ public class TrackManager : MonoBehaviour
             SpawnRoad(Random.Range(0, roadPrefabs.Length));
             DeleteRoad();
         }
+
+
     }
 
     void SpawnRoad(int prefabIndex)

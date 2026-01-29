@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using TMPro.Examples;
+using UnityEngine.Playables;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,8 +14,16 @@ public class GameManager : MonoBehaviour
     public CameraController cam;
     public TextMeshProUGUI countdownText;
 
+    [Header("Timeline Settings")]
+    public PlayableDirector introTimeline;
+
     [Header("Settings")]
     public float introDuration = 3.0f;
+
+    [Header("Game Loop")]
+    public int currentRound = 1;
+    public int maxRounds = 4;
+    public bool isGameOver = false;
 
     private void Awake()
     {
@@ -23,43 +32,76 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(GameLoop());
+
+        player.isGameActive = false;
+
+        if (countdownText != null) countdownText.gameObject.SetActive(false);
+
+        if (introTimeline != null)
+        {
+            introTimeline.stopped += OnCutsceneFinished;
+
+            introTimeline.Play();
+        }
+        else
+        {
+            StartGame();
+        }
+
     }
 
-    IEnumerator GameLoop()
+    void OnCutsceneFinished(PlayableDirector director)
     {
-        // --- PHASE 1: INTRO (กล้องหมุน) ---
-        countdownText.gameObject.SetActive(false);
-        player.isGameActive = false;
-        enemy.isGameActive = false;
+        introTimeline.stopped -= OnCutsceneFinished;
+        StartCoroutine(StartCountdownRoutine());
+    }
 
-        cam.SetState(CameraController.CamState.Intro);
-        yield return new WaitForSeconds(introDuration);
+    IEnumerator StartCountdownRoutine()
+    {
+        if (countdownText != null)
+        {
+            countdownText.gameObject.SetActive(true);
+            countdownText.text = "3";
+            yield return new WaitForSeconds(1f);
+            countdownText.text = "2";
+            yield return new WaitForSeconds(1f);
+            countdownText.text = "1";
+            yield return new WaitForSeconds(1f);
+            countdownText.text = "GO!";
+        }
 
-        // --- PHASE 2: PREPARE (กล้องเข้าที่) ---
-        cam.SetState(CameraController.CamState.Ready);
-        yield return new WaitForSeconds(1.5f);
+        StartGame();
 
-        countdownText.gameObject.SetActive(true);
+        if (countdownText != null)
+        {
+            yield return new WaitForSeconds(1f);
+            countdownText.gameObject.SetActive(false);
+        }
+    }
 
-        countdownText.text = "3";
-        yield return new WaitForSeconds(1f);
 
-        countdownText.text = "2";
-        yield return new WaitForSeconds(1f);
+    public void TriggerGameOver()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+        Debug.Log("GAME OVER - All Zombies Dead");
 
-        countdownText.text = "1";
-        yield return new WaitForSeconds(1f);
+        // TODO: ขึ้นหน้าจอ Game Over UI
+        StopAllCoroutines(); // หยุดเกม
 
-        // --- PHASE 3: GO! ---
-        countdownText.text = "GO!";
+    }
+
+
+    void StartGame()
+    {
+        Debug.Log("Game Started!");
         player.isGameActive = true;
-        enemy.isGameActive = true;
-        cam.SetState(CameraController.CamState.Tracking);
+    }
 
-        yield return new WaitForSeconds(1f);
-        countdownText.gameObject.SetActive(false);
-
+    public void EnemyFinished()
+    {
+        Debug.Log("Enemy win!");
+        // อาจจะขึ้น UI แจ้งเตือนว่า "โดนแซง!"
     }
 
     void Update()
