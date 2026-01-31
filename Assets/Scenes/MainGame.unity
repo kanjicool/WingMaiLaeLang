@@ -411,6 +411,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &408414259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408414260}
+  - component: {fileID: 408414261}
+  m_Layer: 0
+  m_Name: HumanSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &408414260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408414259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.32978, y: 0.05, z: 5.04903}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &408414261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408414259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22578147d69e7d64fb96aefd74c3237e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HumanSpawner
+  humanPrefabs:
+  - {fileID: 5985336205340119264, guid: 459f0525f389a2d4a8ffcdf703905718, type: 3}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +704,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   playerAnimator: {fileID: 420590341}
   forwardSpeed: 10
-  laneDistance: 3
   laneChangeSmoothTime: 0.15
   maxLaneSpeed: 20
   rotationSpeed: 10
@@ -1211,6 +1256,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6345c832c3bcbca45b9e4f93c54af663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  laneDistance: 3.3
+  laneSwitchSpeed: 10
   player: {fileID: 420590345}
   countdownText: {fileID: 711046923}
   introTimeline: {fileID: 1852629483}
@@ -1748,7 +1795,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   playerAnimator: {fileID: 0}
   forwardSpeed: 10
-  laneDistance: 3
   laneChangeSmoothTime: 0.15
   maxLaneSpeed: 20
   rotationSpeed: 10
@@ -2551,3 +2597,4 @@ SceneRoots:
   - {fileID: 1164086721}
   - {fileID: 788609821}
   - {fileID: 481479723}
+  - {fileID: 408414260}

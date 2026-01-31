@@ -34,9 +34,19 @@ public class TrackManager : MonoBehaviour
 
     void SpawnRoad(int prefabIndex)
     {
-        GameObject go = Instantiate(roadPrefabs[prefabIndex], transform.forward * spawnZ, transform.rotation);
+        GameObject newRoad = Instantiate(roadPrefabs[prefabIndex], transform.forward * spawnZ, transform.rotation);
         spawnZ += roadLength;
-        activeRoads.Add(go);
+        activeRoads.Add(newRoad);
+
+        if (HumanSpawner.Instance != null)
+        {
+            RoadSpawnPoint[] points = newRoad.GetComponentsInChildren<RoadSpawnPoint>();
+
+            foreach (var point in points)
+            {
+                HumanSpawner.Instance.SpawnHumanAtPoint(point);
+            }
+        }
     }
 
     void DeleteRoad()

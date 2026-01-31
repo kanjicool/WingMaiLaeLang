@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 721853558102854220}
   - component: {fileID: 53084657792736588}
   - component: {fileID: 2641218800040366259}
+  - component: {fileID: -380648934091792955}
   m_Layer: 0
   m_Name: HumanTarget
   m_TagString: Human
@@ -113,3 +114,16 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-380648934091792955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5985336205340119264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70592fb69a2d312428a29e313bb426b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HumanController
+  data: {fileID: 11400000, guid: 9abd207a74b7460439eb5e53782257f1, type: 2}

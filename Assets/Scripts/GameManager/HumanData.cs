@@ -6,9 +6,11 @@ public class HumanData : ScriptableObject
     public enum HumanType { Civilian, Police, Soldier}
     public HumanType type;
 
-    public float fleeSpeed = 3f;
-    public float attackRange = 10f;
+    [Header("Stats")]
+    public float moveSpeed = 5f;
+    public float detectRange = 15f;
     public float attackRate = 1f;
     public int zombieValue = 1;
+    public GameObject projectilePrefab;
 
 }

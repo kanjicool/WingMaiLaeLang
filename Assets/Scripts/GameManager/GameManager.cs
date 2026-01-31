@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [Header("Global Lane Settings")]
+    public float laneDistance = 3.3f;
+    public float laneSwitchSpeed = 10f;
+
+
     [Header("References")]
     public PlayerController player;
     public TextMeshProUGUI countdownText;

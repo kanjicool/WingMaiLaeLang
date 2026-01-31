@@ -32,7 +32,20 @@ public class LaneDebugger : MonoBehaviour
 
         if (_playerController == null) return;
 
-        float laneDist = _playerController.laneDistance;
+        float laneDist = 3.3f;
+
+        if (GameManager.Instance != null)
+        {
+            laneDist = GameManager.Instance.laneDistance;
+        }
+        else
+        {
+            GameManager gm = FindAnyObjectByType<GameManager>();
+            if (gm != null)
+            {
+                laneDist = gm.laneDistance;
+            }
+        }
 
         GameObject[] grounds = GameObject.FindGameObjectsWithTag(groundTag);
 

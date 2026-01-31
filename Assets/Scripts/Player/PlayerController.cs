@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement Settings")]
     public float forwardSpeed = 10f;
-    public float laneDistance = 4f;
 
     public float laneChangeSmoothTime = 0.15f;
     public float maxLaneSpeed = 20f;
@@ -73,6 +72,7 @@ public class PlayerController : MonoBehaviour
     public void ResetPlayerPosition()
     {
         currentLane = startLane;
+        float laneDistance = GameManager.Instance.laneDistance;
         float startX = (currentLane - 1) * laneDistance;
         Vector3 startPos = new Vector3(startX, 0, 0);
 
@@ -163,6 +163,7 @@ public class PlayerController : MonoBehaviour
         verticalVelocity.y += gravityValue * Time.deltaTime;
 
         // Lane Movement
+        float laneDistance = GameManager.Instance.laneDistance;
         float targetX = (currentLane - 1) * laneDistance;
 
         float nextX = Mathf.SmoothDamp(transform.position.x, targetX, ref currentVelocityX, laneChangeSmoothTime, maxLaneSpeed);
