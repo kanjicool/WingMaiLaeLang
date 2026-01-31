@@ -42,7 +42,6 @@ public class HumanController : MonoBehaviour
     void Shoot()
     {
         Debug.Log("Police Shoot!");
-        PlayerController.Instance.RemoveZombie();
 
         // TODO: เล่น Effect ยิงปืน
     }

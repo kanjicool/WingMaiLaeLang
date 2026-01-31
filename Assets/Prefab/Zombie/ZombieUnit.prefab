@@ -105,6 +105,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieController
   data: {fileID: 11400000, guid: c0bc1fac96fa8f047a3da48a436b2a36, type: 2}
+  xDampBase: 0.15
+  xDampPerInex: 1
+  xDampMax: 1
+  noiseSpeed: 1
+  noiseAmount: 0.3
+  noiseOffset: 0
+  separationForce: 2
 --- !u!136 &8073965502947824025
 CapsuleCollider:
   m_ObjectHideFlags: 0

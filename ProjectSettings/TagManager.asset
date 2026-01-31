@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Human
   - Obstacle
+  - Item
   layers:
   - Default
   - TransparentFX

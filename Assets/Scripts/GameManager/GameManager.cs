@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     public PlayerController player;
-    public AIController enemy;
-    public CameraController cam;
     public TextMeshProUGUI countdownText;
 
     [Header("Timeline Settings")]
@@ -21,8 +19,6 @@ public class GameManager : MonoBehaviour
     public float introDuration = 3.0f;
 
     [Header("Game Loop")]
-    public int currentRound = 1;
-    public int maxRounds = 4;
     public bool isGameOver = false;
 
     private void Awake()
@@ -52,6 +48,8 @@ public class GameManager : MonoBehaviour
 
     void OnCutsceneFinished(PlayableDirector director)
     {
+        if (this == null || gameObject == null) return;
+
         introTimeline.stopped -= OnCutsceneFinished;
         StartCoroutine(StartCountdownRoutine());
     }
