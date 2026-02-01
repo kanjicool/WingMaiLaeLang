@@ -8,7 +8,8 @@ public class HumanController : MonoBehaviour
     private Animator anim;
 
     [Header("Lane Settings")]
-    public float laneChangeSpeed = 10f;
+    public float laneChangeSmoothTime = 0.15f;
+    public float maxLaneSpeed = 20f;
     public int currentLane = 1;
 
     [Header("Detection Settings")]
@@ -17,6 +18,9 @@ public class HumanController : MonoBehaviour
     public float jumpTriggerDist = 2.0f;
     public LayerMask obstacleLayer;
 
+    [Header("Cleanup Settings")]
+    public float despawnDistance = 40f;
+    public float cleanupBehindDist = 10f;
 
     [Header("Jump Settings (For Runner)")]
     public float jumpHeight = 1.5f;
@@ -28,9 +32,12 @@ public class HumanController : MonoBehaviour
     private float nextAttackTime = 0f;
     private bool isDead = false;
 
+    private bool isDespawning = false;
+
     // Movement Internal
     private Transform playerTransform;
     private float verticalVelocityY = 0f;
+    private float currentVelocityX;
 
 
     void Start()
@@ -39,7 +46,9 @@ public class HumanController : MonoBehaviour
         {
             playerTransform = PlayerController.Instance.transform;
         }
-        
+
+        transform.SetParent(null);
+
         anim = GetComponentInChildren<Animator>();
 
         if (anim) anim.Play("Idle", 0, Random.Range(0f, 1f));
@@ -64,6 +73,26 @@ public class HumanController : MonoBehaviour
     {
         if (isDead || playerTransform == null) return;
 
+        if (isDespawning) return;
+        
+        float distZ = transform.position.z - playerTransform.position.z;
+
+        if (distZ < -cleanupBehindDist)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        if (distZ > despawnDistance)
+        {
+            if (data.type == HumanData.HumanType.Runner && isActive)
+            {
+                StartCoroutine(FadeOutAndDestroy());
+                return;
+            }
+        }
+
+
         float distanceToPlayer = transform.position.z - playerTransform.position.z;
         if (distanceToPlayer < data.detectRange && distanceToPlayer > 0) isActive = true;
         
@@ -77,7 +106,6 @@ public class HumanController : MonoBehaviour
             }
             return;
         }
-
 
         switch (data.type)
         {
@@ -97,18 +125,27 @@ public class HumanController : MonoBehaviour
             float laneDistance = GameManager.Instance.laneDistance;
             float targetX = (currentLane - 1) * laneDistance;
 
-            float newX = Mathf.Lerp(transform.position.x, targetX, laneChangeSpeed * Time.deltaTime);
+            float newX = Mathf.SmoothDamp(transform.position.x, targetX, ref currentVelocityX, laneChangeSmoothTime, maxLaneSpeed);
             float newY = verticalVelocityY;
 
             transform.position = new Vector3(newX, newY, transform.position.z);
+
+            float visualForwardSpeed = (data.type == HumanData.HumanType.Runner) ? 10f : -10f;
+            
+            Vector3 directionToLook = new Vector3(currentVelocityX, 0, visualForwardSpeed);
+
+            if (directionToLook != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+                // หมุนตัวอย่างนุ่มนวล
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+            }
         }
 
     }
 
     void HandleCivilianBehavior(float dist)
     {
-        transform.LookAt(playerTransform);
-
         if (dist < 8f)
         {
             if (anim)
@@ -125,8 +162,6 @@ public class HumanController : MonoBehaviour
 
     void HandleRunnerBehavior(float dist)
     {
-        Quaternion runRotation = Quaternion.LookRotation(Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, runRotation, 10f * Time.deltaTime);
         transform.Translate(Vector3.forward * data.moveSpeed * Time.deltaTime, Space.World);
 
         if (anim) anim.SetBool("IsRunning", true);
@@ -161,9 +196,8 @@ public class HumanController : MonoBehaviour
 
     void HandleSoldierBehavior(float dist)
     {
-        transform.LookAt(playerTransform);
-
         if (anim) anim.SetBool("IsRunning", false);
+        if (anim) anim.SetBool("IsIdleGun", true);
 
         if (Time.time >= nextAttackTime)
         {
@@ -175,13 +209,16 @@ public class HumanController : MonoBehaviour
     void Shoot()
     {
         Debug.Log("Soldier Shooting!");
+
         if (data.projectilePrefab != null)
         {
-            Instantiate(data.projectilePrefab, transform.position + Vector3.up, transform.rotation);
-        }
+            // aimbot
+            //Instantiate(data.projectilePrefab, transform.position + Vector3.up, transform.rotation);
 
-        // ถ้าไม่มี projectile ก็สั่งลดจำนวนซอมบี้โดยตรงเลยก็ได้ (HitScan)
-        // SwarmManager.Instance.RemoveZombie(); 
+            // normal
+            Quaternion bulletRotation = Quaternion.Euler(0, 180, 0);
+            Instantiate(data.projectilePrefab, transform.position + Vector3.up * 1.5f, bulletRotation);
+        }
     }
 
     IEnumerator JumpRoutine()
@@ -257,6 +294,9 @@ public class HumanController : MonoBehaviour
     public void OnEaten()
     {
         isDead = true;
+
+        StopAllCoroutines();
+
         if (anim) anim.SetTrigger("Dead");
 
         if (data.bloodEffectPrefab != null)
@@ -269,7 +309,56 @@ public class HumanController : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col) col.enabled = false;
 
+        StartCoroutine(DeathFallRoutine());
+
         Destroy(gameObject, 2f);
     }
+
+    IEnumerator DeathFallRoutine()
+    {
+        float fallSpeed = 0f;
+        float gravity = 50f; // แรงดึงดูด (ปรับได้)
+
+        while (transform.position.y > 0.05f)
+        {
+            fallSpeed += gravity * Time.deltaTime;
+
+            transform.Translate(Vector3.down * fallSpeed * Time.deltaTime, Space.World);
+
+            yield return null;
+        }
+
+        Vector3 pos = transform.position;
+        pos.y = 0;
+        transform.position = pos;
+    }
+
+    IEnumerator FadeOutAndDestroy()
+    {
+        isDespawning = true; // ล็อคไม่ให้ Update ทำงานซ้อน
+        float timer = 0f;
+        float duration = 1.0f; // ใช้เวลา 1 วินาทีในการหายตัว
+        Vector3 initialScale = transform.localScale;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / duration;
+
+            // ย่อขนาดลงจาก 1 -> 0
+            transform.localScale = Vector3.Lerp(initialScale, Vector3.zero, progress);
+
+            // (Optional) ถ้า Runner วิ่งอยู่ ให้มันวิ่งต่อไปด้วยระหว่างที่ตัวเล็กลง
+            if (data.type == HumanData.HumanType.Runner)
+            {
+                transform.Translate(Vector3.forward * data.moveSpeed * Time.deltaTime, Space.World);
+            }
+
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
+
 
 }

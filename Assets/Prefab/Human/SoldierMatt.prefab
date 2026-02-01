@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &3318398625935925845
+--- !u!1001 &9183072806463412015
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -16.639
+      value: -23.054
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -34,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.1922286
+      value: 4.95
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -318,7 +318,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_Name
-      value: CivilianMatt
+      value: SoldierMatt
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_TagString
@@ -434,7 +434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5844622625683270731, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5878876139492944976, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -557,31 +557,40 @@ PrefabInstance:
       value: 10.911786
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -7113942821328085987, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 5878315412322223824, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 2336492113530626776, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 8790770566214991513, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 3132040912728494395, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 8660722148722008315, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: -6765082673610038721, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 5012483027383546419, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
+    - {fileID: 2029229093942017060, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5823704746424133979}
+      addedObject: {fileID: 7111072807110611031}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1137643114329578533}
+      addedObject: {fileID: 1152523049881624107}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5900538447748517922}
+      addedObject: {fileID: 1859267694383075160}
   m_SourcePrefab: {fileID: 100100000, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
---- !u!1 &2507440828901957380 stripped
+--- !u!1 &8336653025552640638 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: bcac3bcb1b0db1248b35aaf0e2ce295c, type: 3}
-  m_PrefabInstance: {fileID: 3318398625935925845}
+  m_PrefabInstance: {fileID: 9183072806463412015}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &5823704746424133979
+--- !u!136 &7111072807110611031
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2507440828901957380}
+  m_GameObject: {fileID: 8336653025552640638}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -598,14 +607,14 @@ CapsuleCollider:
   m_Height: 1.4360424
   m_Direction: 1
   m_Center: {x: 0.015299797, y: 0.67701334, z: 0}
---- !u!95 &1137643114329578533
+--- !u!95 &1152523049881624107
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2507440828901957380}
+  m_GameObject: {fileID: 8336653025552640638}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: c3b452f1c8e30854e9410e08b2cf2ae8, type: 2}
@@ -620,19 +629,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5900538447748517922
+--- !u!114 &1859267694383075160
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2507440828901957380}
+  m_GameObject: {fileID: 8336653025552640638}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70592fb69a2d312428a29e313bb426b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HumanController
-  data: {fileID: 11400000, guid: d514a5e36f9af1541a5a09b83096a89f, type: 2}
+  data: {fileID: 11400000, guid: 1ba93cc36a3fc5143acff08bf47d8029, type: 2}
   laneChangeSmoothTime: 0.15
   maxLaneSpeed: 20
   currentLane: 1

@@ -314,7 +314,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b48e5e7d805ce084981820b56179289d, type: 3}
       propertyPath: m_Name
-      value: Zombie_Chubby
+      value: ZombieChubby
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b48e5e7d805ce084981820b56179289d, type: 3}
+      propertyPath: m_TagString
+      value: Zombie
       objectReference: {fileID: 0}
     - target: {fileID: 963086819041503259, guid: b48e5e7d805ce084981820b56179289d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

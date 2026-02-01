@@ -206,6 +206,8 @@ public class PlayerController : MonoBehaviour
             float energyRecoveryAmount = 10f; 
             AddEnergy(energyRecoveryAmount);
 
+            if (human == null) human = other.GetComponentInParent<HumanController>();
+
             if (human != null)
             {
                 human.OnEaten();

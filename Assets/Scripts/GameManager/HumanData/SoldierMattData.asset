@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb21cbdb7d561dc4b8dad82a13bea0ff, type: 3}
-  m_Name: CivilianSamData
+  m_Name: SoldierMattData
   m_EditorClassIdentifier: Assembly-CSharp::HumanData
-  type: 0
-  moveSpeed: 5
-  detectRange: 15
-  attackRate: 1
-  zombieValue: 0
-  projectilePrefab: {fileID: 0}
+  type: 2
+  moveSpeed: 8
+  detectRange: 20
+  attackRate: 3
+  zombieValue: 1
+  projectilePrefab: {fileID: 7323082005757754344, guid: 08d22c92dabd20e4297e2cd044b19af6, type: 3}
   bloodEffectPrefab: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}

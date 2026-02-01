@@ -11,6 +11,8 @@ TagManager:
   - Obstacle
   - Item
   - Jumpable
+  - FxTemporaire
+  - Zombie
   layers:
   - Default
   - TransparentFX

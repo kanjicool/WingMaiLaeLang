@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: RunnerLisData
   m_EditorClassIdentifier: Assembly-CSharp::HumanData
   type: 1
-  moveSpeed: 5
-  detectRange: 15
+  moveSpeed: 7.5
+  detectRange: 18
   attackRate: 1
-  zombieValue: 1
+  zombieValue: 2
   projectilePrefab: {fileID: 0}
+  bloodEffectPrefab: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}

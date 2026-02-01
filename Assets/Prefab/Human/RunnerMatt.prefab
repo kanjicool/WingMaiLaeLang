@@ -916,11 +916,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70592fb69a2d312428a29e313bb426b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HumanController
-  data: {fileID: 11400000, guid: 12275438bc1713049ae7533d43126938, type: 2}
-  laneChangeSpeed: 10
+  data: {fileID: 11400000, guid: 1ba93cc36a3fc5143acff08bf47d8029, type: 2}
+  laneChangeSmoothTime: 0.15
+  maxLaneSpeed: 20
   currentLane: 1
-  jumpHeight: 1.5
-  jumpDuration: 0.8
+  laneCheckDistance: 6
+  jumpCheckDistance: 5
+  jumpTriggerDist: 2
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 128
+  despawnDistance: 40
+  cleanupBehindDist: 10
+  jumpHeight: 1.5
+  jumpDuration: 0.8
