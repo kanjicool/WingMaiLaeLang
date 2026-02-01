@@ -69,6 +69,11 @@ public class SwarmManager : MonoBehaviour
         }
     }
 
+    public int GetZombieCount()
+    {
+        return zombies.Count;
+    }
+
     public void AddZombie()
     {
         if (defaultZombieData == null) return;
@@ -219,4 +224,6 @@ public class SwarmManager : MonoBehaviour
         if (action == "Jump") z.DoJump();
         else if (action == "Slide") z.DoSlide();
     }
+
+
 }

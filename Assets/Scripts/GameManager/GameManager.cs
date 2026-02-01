@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections;
 using TMPro.Examples;
@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Loop")]
     public bool isGameOver = false;
+
+    [Header("UI Game Over")] // ใส่หัวข้อให้หาง่ายๆ
+    public GameObject gameOverPanel; // <--- บรรทัดสำคัญที่ขาดไป!
 
     private void Awake()
     {
@@ -89,11 +92,28 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         Debug.Log("GAME OVER - All Zombies Dead");
 
-        // TODO: ���˹�Ҩ� Game Over UI
-        StopAllCoroutines(); // ��ش��
+        StopAllCoroutines();
 
+        // --- ส่วนที่ต้องเพิ่มเข้าไปครับ ---
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
+
+        // ถ้ามีระบบเสียง อยากให้เสียงเงียบด้วย ให้ใส่ตรงนี้
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopAllSound();
+        }
     }
 
+    // ฟังก์ชันสำหรับปุ่ม Main Menu
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f; // สำคัญมาก! ต้องให้เวลากลับมาเดินก่อนเปลี่ยนฉาก
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
 
     void StartGame()
     {
@@ -104,7 +124,7 @@ public class GameManager : MonoBehaviour
     public void EnemyFinished()
     {
         Debug.Log("Enemy win!");
-        // �Ҩ�Т�� UI ����͹��� "ⴹ᫧!"
+        // ÍÒ¨¨Ð¢Öé¹ UI á¨é§àµ×Í¹ÇèÒ "â´¹á«§!"
     }
 
     void Update()

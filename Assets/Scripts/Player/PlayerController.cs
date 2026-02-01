@@ -269,10 +269,23 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(BriefInvincibilityRoutine());
                 Debug.Log("Shield Broke!");
             }
+            //else
+            //{
+            //    // 4. ไม่มีอะไรป้องกันเลย
+            //    SwarmManager.Instance.RemoveZombie();
+            //}
             else
             {
                 // 4. ไม่มีอะไรป้องกันเลย
+                // สั่งลบซอมบี้
                 SwarmManager.Instance.RemoveZombie();
+
+                // ** เพิ่มการเช็ค: ถ้าซอมบี้หมดฝูงแล้วถือว่าแพ้ **
+                // (สมมติว่าใน SwarmManager คุณมีตัวแปร zombies.Count หรือคล้ายๆ กัน)
+                if (SwarmManager.Instance.GetZombieCount() <= 0)
+                {
+                    GameOver();
+                }
             }
         }
         else if (other.CompareTag("Item"))
@@ -369,11 +382,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //private void GameOver()
+    //{
+    //    isGameActive = false;
+    //    Debug.Log("Energy Depleted! Game Over");
+    //    // ใส่ Logic จบเกมของคุณตรงนี้ เช่น แสดง Pop-up หรือหยุดการเคลื่อนที่
+    //}
     private void GameOver()
     {
+        if (!isGameActive) return; // ป้องกันการเรียกซ้ำ
+
         isGameActive = false;
-        Debug.Log("Energy Depleted! Game Over");
-        // ใส่ Logic จบเกมของคุณตรงนี้ เช่น แสดง Pop-up หรือหยุดการเคลื่อนที่
+        Debug.Log("Game Over Triggered!");
+
+        // 1. สั่งให้ Animator เล่นท่าตาย (ถ้ามี Parameter "Die" ใน Animator)
+        if (playerAnimator) playerAnimator.SetTrigger("Die");
+
+        // 2. เรียก GameManager เพื่อโชว์หน้า UI และหยุดเวลา
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.TriggerGameOver();
+        }
     }
 
     public void AddEnergy(float amount)
