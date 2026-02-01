@@ -67,4 +67,15 @@ public class ZombieController : MonoBehaviour
     {
         if (anim) anim.SetTrigger("Slide");
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle"))
+        {
+            if (SwarmManager.Instance != null)
+            {
+                SwarmManager.Instance.KillSpecificZombie(this);
+            }
+        }
+    }
 }

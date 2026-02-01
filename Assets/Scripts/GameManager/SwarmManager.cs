@@ -18,6 +18,11 @@ public class SwarmManager : MonoBehaviour
     public float minSeparation = 0.8f;  // ระยะห่างต่ำสุดระหว่างซอมบี้ (กันตัวซ้อน)
     public float centerOffsetZ = -2.0f; // จุดศูนย์กลางฝูงให้อยู่หลัง Player กี่เมตร
 
+    [Header("VFX Settings")]
+    public GameObject spawnVFX; // เอฟเฟกต์ตอนเกิด (เช่น ควันเขียว)
+    public GameObject deathVFX; // เอฟเฟกต์ตอนตาย (เช่น เลือดหรือกะโหลก)
+    public float vfxOffsetHeight = 1.0f; // ความสูงที่จะเสก VFX (ระดับอก)
+
     [Header("Movement Physics")]
     public float baseSmoothTime = 0.3f; // ความหน่วง (ยิ่งเยอะยิ่งไหล)
     public float maxSpeed = 20f;
@@ -90,6 +95,17 @@ public class SwarmManager : MonoBehaviour
         zCtrl.Initialize(selectedData);
         
         zombies.Add(zCtrl);
+
+        if (spawnVFX != null)
+        {
+            Vector3 vfxPos = go.transform.position;
+            GameObject vfx = Instantiate(spawnVFX, vfxPos, Quaternion.identity);
+
+            // ให้ Effect วิ่งตามตัวซอมบี้ไปด้วย (ถ้าอยากให้ติดตัว)
+             vfx.transform.SetParent(go.transform);
+
+            Destroy(vfx, 2.0f); // ลบ Effect ทิ้งเมื่อเล่นจบ
+        }
     }
 
     // ฟังก์ชันสุ่มหาที่ว่างในฝูง (สำคัญมาก!)
@@ -153,10 +169,25 @@ public class SwarmManager : MonoBehaviour
     {
         if (zombies.Count == 0) return;
         int lastIndex = zombies.Count - 1;
-        ZombieController z = zombies[lastIndex];
-        zombies.RemoveAt(lastIndex);
-        Destroy(z.gameObject);
+        KillSpecificZombie(zombies[lastIndex]);
+
     }
+
+    public void KillSpecificZombie(ZombieController targetZombie)
+    {
+        if (!zombies.Contains(targetZombie)) return; // เช็คว่ามีตัวนี้ในลิสต์ไหม
+
+        if (deathVFX != null)
+        {
+            Vector3 vfxPos = targetZombie.transform.position + Vector3.up * vfxOffsetHeight;
+            GameObject vfx = Instantiate(deathVFX, vfxPos, Quaternion.identity);
+            Destroy(vfx, 2.0f);
+        }
+
+        zombies.Remove(targetZombie);
+        Destroy(targetZombie.gameObject);
+    }
+
 
     public void ResetSwarm()
     {

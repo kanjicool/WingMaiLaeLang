@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     public float slideDuration = 0.5f;
     public float slideHeight = 0.5f;
     public float slideCenterY = 0.25f;
+    public float slideCooldown = 1.0f;
 
     // State Variables
     private int currentLane = 1;
@@ -52,6 +53,9 @@ public class PlayerController : MonoBehaviour
     private bool isSliding = false;
     private float originalHeight;
     private Vector3 originalCenter;
+
+    private float nextSlideTime = 0f;
+    private Coroutine currentSlideRoutine;
 
     private float currentVelocityX;
 
@@ -137,23 +141,44 @@ public class PlayerController : MonoBehaviour
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
         if (!isGameActive) return;
-        if (controller.isGrounded)
+        if (controller.isGrounded || isSliding)
         {
+            if (isSliding)
+            {
+                StopSlideImmediate();
+            }
+
             verticalVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityValue);
+
             if (playerAnimator) playerAnimator.SetTrigger("Jump");
-            if (SwarmManager.Instance != null ) SwarmManager.Instance.HordeJump();
+            if (SwarmManager.Instance != null) SwarmManager.Instance.HordeJump();
         }
     }
 
     private void OnSlidePerformed(InputAction.CallbackContext context)
     {
         if (!isGameActive) return;
-        if (controller.isGrounded && !isSliding)
+        if (controller.isGrounded && !isSliding && Time.time >= nextSlideTime)
         {
-            StartCoroutine(SlideRoutine());
+            currentSlideRoutine = StartCoroutine(SlideRoutine());
+
             if (playerAnimator) playerAnimator.SetTrigger("Slide");
             if (SwarmManager.Instance != null) SwarmManager.Instance.HordeSlide();
+
+            nextSlideTime = Time.time + slideCooldown;
         }
+    }
+
+    void StopSlideImmediate()
+    {
+        if (currentSlideRoutine != null) StopCoroutine(currentSlideRoutine);
+
+        controller.height = originalHeight;
+        controller.center = originalCenter;
+
+        isSliding = false;
+
+        if (playerAnimator) playerAnimator.ResetTrigger("Slide");
     }
 
     void Update()
