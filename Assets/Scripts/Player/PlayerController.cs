@@ -27,8 +27,8 @@ public class PlayerController : MonoBehaviour
     [Header("Power Ups")]
     public bool isX2Active = false;
     public bool isInvincible = false;
+    public bool hasShield = false;
     public float powerUpDuration = 5f;
-    public bool isSpeedBoosted = false;
     public bool isSlowDrainActive = false;
 
     [Header("Start Settings")]
@@ -63,7 +63,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private GameControls controls;
 
-    public bool isX2Warning, isInvinWarning, isSpeedWarning, isSlowWarning;
+    public bool isX2Warning, isInvinWarning, isShieldWarning, isSlowWarning;
+
+    private bool isBriefInvincible = false;
 
     void Awake()
     {
@@ -249,12 +251,27 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("Obstacle"))
         {
+            // 1. ถ้าอมตะอยู่ (Invincible) ไม่ต้องทำอะไรเลย เดินทะลุได้เลย
             if (isInvincible)
             {
-                Destroy(other.gameObject);
+                Debug.Log("Invincible: Walking through obstacle!");
+                return;
+            }
+
+            // 2. ถ้าไม่อมตะ แต่กำลังอยู่ในช่วง "อมตะชั่วพริบตา" หลังโล่เพิ่งแตก
+            if (isBriefInvincible) return;
+
+            // 3. ถ้ามีโล่ (Shield)
+            if (hasShield)
+            {
+                hasShield = false;
+                isShieldWarning = false;
+                StartCoroutine(BriefInvincibilityRoutine());
+                Debug.Log("Shield Broke!");
             }
             else
             {
+                // 4. ไม่มีอะไรป้องกันเลย
                 SwarmManager.Instance.RemoveZombie();
             }
         }
@@ -272,29 +289,46 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator PowerUpRoutine(string itemType)
     {
-        float warnTime = 1.5f; // จะเริ่มกระพริบก่อนหมด 1.5 วินาที
+        float warnTime = 1.5f;
 
         // --- เริ่มต้นใช้งาน Buff ---
         if (itemType == "x2") isX2Active = true;
-        else if (itemType == "Invincible") isInvincible = true;
-        else if (itemType == "Speed") { forwardSpeed += 5f; isSpeedBoosted = true; }
+        else if (itemType == "Shield") hasShield = true;
+        else if (itemType == "Invincible") isInvincible = true; // เปิดใช้งานอมตะ
         else if (itemType == "SlowDrain") { energyDepletionRate -= 0.5f; isSlowDrainActive = true; }
 
         // รอจนถึงช่วงใกล้หมด
-        yield return new WaitForSeconds(powerUpDuration - warnTime);
+        float elapsed = 0f;
+        float duration = powerUpDuration - warnTime;
+
+        while (elapsed < duration)
+        {
+            // พิเศษสำหรับ Shield: ถ้าชนก่อนหมดเวลา ให้จบ Coroutine
+            if (itemType == "Shield" && !hasShield) yield break;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
 
         // --- เริ่มสถานะ Warning ---
         if (itemType == "x2") isX2Warning = true;
-        else if (itemType == "Invincible") isInvinWarning = true;
-        else if (itemType == "Speed") isSpeedWarning = true;
+        else if (itemType == "Shield" && hasShield) isShieldWarning = true;
+        else if (itemType == "Invincible") isInvinWarning = true; // แจ้งเตือนอมตะใกล้หมด
         else if (itemType == "SlowDrain") isSlowWarning = true;
 
-        yield return new WaitForSeconds(warnTime);
+        // รอช่วง Warning
+        elapsed = 0f;
+        while (elapsed < warnTime)
+        {
+            if (itemType == "Shield" && !hasShield) { isShieldWarning = false; yield break; }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
 
         // --- ปิด Buff และ Warning ---
         if (itemType == "x2") { isX2Active = false; isX2Warning = false; }
+        else if (itemType == "Shield") { hasShield = false; isShieldWarning = false; }
         else if (itemType == "Invincible") { isInvincible = false; isInvinWarning = false; }
-        else if (itemType == "Speed") { forwardSpeed -= 5f; isSpeedBoosted = false; isSpeedWarning = false; }
         else if (itemType == "SlowDrain") { energyDepletionRate += 0.5f; isSlowDrainActive = false; isSlowWarning = false; }
     }
 
@@ -314,6 +348,13 @@ public class PlayerController : MonoBehaviour
         controller.center = originalCenter;
         isSliding = false;
     }
+    IEnumerator BriefInvincibilityRoutine()
+    {
+        isBriefInvincible = true;
+        yield return new WaitForSeconds(0.5f); // เวลาที่ใช้เดินทะลุอุปสรรคหลังโล่แตก
+        isBriefInvincible = false;
+    }
+
 
     private void DepleteEnergy()
     {

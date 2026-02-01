@@ -157,7 +157,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300132, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d1c70197ab49219428ceb88a203202b8, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -764,6 +764,9 @@ MonoBehaviour:
   swarmDepth: 4
   minSeparation: 0.8
   centerOffsetZ: 0
+  spawnVFX: {fileID: 0}
+  deathVFX: {fileID: 0}
+  vfxOffsetHeight: 1
   baseSmoothTime: 0.05
   maxSpeed: 50
   zombies: []
@@ -801,6 +804,7 @@ MonoBehaviour:
   slideDuration: 0
   slideHeight: 0.5
   slideCenterY: 0.25
+  slideCooldown: 1
   isX2Warning: 0
   isInvinWarning: 0
   isSpeedWarning: 0
@@ -2665,6 +2669,7 @@ MonoBehaviour:
   slideDuration: 1
   slideHeight: 0.5
   slideCenterY: 0.25
+  slideCooldown: 1
   isX2Warning: 0
   isInvinWarning: 0
   isSpeedWarning: 0
@@ -2688,6 +2693,9 @@ MonoBehaviour:
   swarmDepth: 5
   minSeparation: 0.8
   centerOffsetZ: 0
+  spawnVFX: {fileID: 0}
+  deathVFX: {fileID: 0}
+  vfxOffsetHeight: 1
   baseSmoothTime: 0.1
   maxSpeed: 15
   zombies: []

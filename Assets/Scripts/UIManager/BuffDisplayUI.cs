@@ -7,12 +7,11 @@ public class BuffDisplayUI : MonoBehaviour
     public GameObject buffContainerRoot;
 
     [Header("Buff Badge Objects")]
-    //public GameObject iconX2;
-    //public GameObject iconInvincible;
-    //public GameObject iconSpeed;
+    public GameObject iconX2;
+    public GameObject iconShield; // เปลี่ยนชื่อจาก Invincible เป็น Shield
     public GameObject iconSlowDrain;
 
-    private bool lastX2, lastInvin, lastSpeed, lastSlow;
+    private bool lastX2, lastShield, lastSlow;
 
     void Update()
     {
@@ -24,33 +23,33 @@ public class BuffDisplayUI : MonoBehaviour
 
         var pc = PlayerController.Instance;
 
-        // เช็คสถานะปัจจุบัน
+        // เช็คสถานะปัจจุบันจาก PlayerController
         bool x2 = pc.isX2Active;
-        bool invin = pc.isInvincible;
-        bool speed = pc.isSpeedBoosted;
+        bool shield = pc.hasShield; // ใช้ตัวแปรใหม่
         bool slow = pc.isSlowDrainActive;
 
         // --- 1. ระบบ Pop-up ขอบขาขึ้น (เพิ่งเก็บได้) ---
-        //if (x2 && !lastX2) TriggerPop(iconX2);
-        //if (invin && !lastInvin) TriggerPop(iconInvincible);
-        //if (speed && !lastSpeed) TriggerPop(iconSpeed);
+        if (x2 && !lastX2) TriggerPop(iconX2);
+        if (shield && !lastShield) TriggerPop(iconShield); // เด้งเมื่อได้โล่ใหม่
         if (slow && !lastSlow) TriggerPop(iconSlowDrain);
 
         // --- 2. อัปเดตสถานะการแสดงผลและกระพริบ ---
-        //UpdateBadge(iconX2, x2, pc.isX2Warning);
-        //UpdateBadge(iconInvincible, invin, pc.isInvinWarning);
-        //UpdateBadge(iconSpeed, speed, pc.isSpeedWarning);
+        UpdateBadge(iconX2, x2, pc.isX2Warning);
+        UpdateBadge(iconShield, shield, pc.isShieldWarning); // ใช้ Warning ของโล่
         UpdateBadge(iconSlowDrain, slow, pc.isSlowWarning);
 
         // --- 3. จัดการ Container ---
-        buffContainerRoot.SetActive(x2 || invin || speed || slow);
+        // ถ้ามีบัฟใดๆ ทำงานอยู่ให้แสดง Root
+        buffContainerRoot.SetActive(x2 || shield || slow);
 
         // บันทึกสถานะไว้เช็ค Frame หน้า
-        lastX2 = x2; lastInvin = invin; lastSpeed = speed; lastSlow = slow;
+        lastX2 = x2; lastShield = shield; lastSlow = slow;
     }
 
     void UpdateBadge(GameObject obj, bool isActive, bool isWarning)
     {
+        if (obj == null) return;
+
         obj.SetActive(isActive);
         if (!isActive) return;
 
@@ -59,7 +58,7 @@ public class BuffDisplayUI : MonoBehaviour
 
         if (isWarning)
         {
-            // กระพริบโดยใช้ค่า Sin Wave (เปลี่ยน Alpha 0.2 ถึง 1.0)
+            // กระพริบถี่ๆ เมื่อใกล้หมดเวลา
             cg.alpha = 0.6f + Mathf.Sin(Time.time * 15f) * 0.4f;
         }
         else
@@ -70,7 +69,8 @@ public class BuffDisplayUI : MonoBehaviour
 
     void TriggerPop(GameObject obj)
     {
-        StopCoroutine("PopRoutine"); // ป้องกัน Coroutine ซ้อนกันถ้าเก็บซ้ำ
+        if (obj == null) return;
+        // ใช้ชื่อ Coroutine แบบระบุ Object เพื่อให้เด้งแยกกันได้ถ้าเก็บพร้อมกัน
         StartCoroutine(PopRoutine(obj));
     }
 
@@ -78,14 +78,15 @@ public class BuffDisplayUI : MonoBehaviour
     {
         float timer = 0;
         float duration = 0.2f;
+        Vector3 nativeScale = Vector3.one;
+
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            // เด้งจาก 0 ไป 1.2 แล้วกลับมา 1.0 ให้ดูมีแรงกระแทก
             float s = Mathf.Lerp(0, 1.2f, timer / duration);
-            obj.transform.localScale = new Vector3(s, s, s);
+            obj.transform.localScale = nativeScale * s;
             yield return null;
         }
-        obj.transform.localScale = Vector3.one;
+        obj.transform.localScale = nativeScale;
     }
 }
