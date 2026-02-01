@@ -5,27 +5,46 @@ public class HumanController : MonoBehaviour
 {
     [Header("Settings")]
     public HumanData data;
-    public Animator anim;
+    private Animator anim;
 
     [Header("Lane Settings")]
     public float laneChangeSpeed = 10f;
     public int currentLane = 1;
 
-    private bool isActive = false;
-    private float nextAttackTime = 0f;
+    [Header("Detection Settings")]
+    public float laneCheckDistance = 6.0f;
+    public float jumpCheckDistance = 5.0f;
+    public float jumpTriggerDist = 2.0f;
+    public LayerMask obstacleLayer;
 
-    private Transform playerTransform;
+
+    [Header("Jump Settings (For Runner)")]
+    public float jumpHeight = 1.5f;
+    public float jumpDuration = 0.8f;
+
+    // State
+    private bool isActive = false;
+    private bool isJumping = false;
+    private float nextAttackTime = 0f;
     private bool isDead = false;
-    
-    
+
+    // Movement Internal
+    private Transform playerTransform;
+    private float verticalVelocityY = 0f;
+
+
     void Start()
     {
         if (PlayerController.Instance != null)
         {
             playerTransform = PlayerController.Instance.transform;
         }
+        
+        anim = GetComponentInChildren<Animator>();
 
-        //if (anim) anim.Play("Idle", 0, Random.Range(0f, 1f));
+        if (anim) anim.Play("Idle", 0, Random.Range(0f, 1f));
+
+        transform.rotation = Quaternion.Euler(0, 180, 0);
 
     }
 
@@ -47,29 +66,56 @@ public class HumanController : MonoBehaviour
 
         float distanceToPlayer = transform.position.z - playerTransform.position.z;
         if (distanceToPlayer < data.detectRange && distanceToPlayer > 0) isActive = true;
-        if (!isActive) return;
+        
+        if (!isActive)
+        {
+            Vector3 directionToPlayer = playerTransform.position - transform.position;
+            directionToPlayer.y = 0;
+            if (directionToPlayer != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(directionToPlayer);
+            }
+            return;
+        }
 
-        //switch (data.type)
-        //{
-        //    case HumanData.HumanType.Civilian: HandleCivilianBehavior(distanceToPlayer); break;
-        //    case HumanData.HumanType.Police: HandleRunnerBehavior(distanceToPlayer); break;
-        //    case HumanData.HumanType.Soldier: HandleSoldierBehavior(distanceToPlayer); break;
-        //}
 
-        float laneDistance = GameManager.Instance.laneDistance;
-        float targetX = (currentLane - 1) * laneDistance;
-        Vector3 newPos = transform.position;
-        newPos.x = Mathf.Lerp(newPos.x, targetX, laneChangeSpeed * Time.deltaTime);
-        transform.position = newPos;
+        switch (data.type)
+        {
+            case HumanData.HumanType.Civilian:
+                HandleCivilianBehavior(distanceToPlayer);
+                break;
+            case HumanData.HumanType.Runner:
+                HandleRunnerBehavior(distanceToPlayer);
+                break;
+            case HumanData.HumanType.Soldier:
+                HandleSoldierBehavior(distanceToPlayer);
+                break;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            float laneDistance = GameManager.Instance.laneDistance;
+            float targetX = (currentLane - 1) * laneDistance;
+
+            float newX = Mathf.Lerp(transform.position.x, targetX, laneChangeSpeed * Time.deltaTime);
+            float newY = verticalVelocityY;
+
+            transform.position = new Vector3(newX, newY, transform.position.z);
+        }
 
     }
 
     void HandleCivilianBehavior(float dist)
     {
+        transform.LookAt(playerTransform);
+
         if (dist < 8f)
         {
-            if (anim) anim.SetBool("IsDucking", true); // ใช้ท่า Duck แทนการกลัว
-            anim.SetBool("IsRunning", false);
+            if (anim)
+            {
+                anim.SetBool("IsDucking", true);
+                anim.SetBool("IsRunning", false);
+            }
         }
         else
         {
@@ -79,15 +125,36 @@ public class HumanController : MonoBehaviour
 
     void HandleRunnerBehavior(float dist)
     {
-        transform.Translate(Vector3.forward * data.moveSpeed * Time.deltaTime);
+        Quaternion runRotation = Quaternion.LookRotation(Vector3.forward);
+        transform.rotation = Quaternion.Slerp(transform.rotation, runRotation, 10f * Time.deltaTime);
+        transform.Translate(Vector3.forward * data.moveSpeed * Time.deltaTime, Space.World);
+
         if (anim) anim.SetBool("IsRunning", true);
 
-        // Raycast เช็คข้างหน้า ถ้าเจอสิ่งกีดขวาง ให้เปลี่ยนเลน
-        if (Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 3f))
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        float rayDist = 4.0f;
+
+        Debug.DrawRay(origin, Vector3.forward * jumpCheckDistance, Color.yellow); // ระยะมองเห็น
+        Debug.DrawRay(origin, Vector3.forward * jumpTriggerDist, Color.red);
+
+        if (Physics.Raycast(origin, Vector3.forward, out RaycastHit hit, rayDist, obstacleLayer, QueryTriggerInteraction.Collide))
         {
-            if (hit.collider.CompareTag("Obstacle"))
+            if (hit.collider.CompareTag("Jumpable") && !isJumping)
             {
-                ChangeLaneRandomly();
+                Debug.Log("Runner sees Jumpable!");
+                if (hit.distance <= jumpTriggerDist && !isJumping)
+                {
+                    StartCoroutine(JumpRoutine());
+                }
+            }
+            else if (hit.collider.CompareTag("Obstacle"))
+            {
+                if (Mathf.Abs(transform.position.x - ((currentLane - 1) * GameManager.Instance.laneDistance)) < 0.5f)
+                {
+                    FindSafeLane();
+                }
+
+                Debug.Log("Runner sees Obstacle! Changing Lane."); 
             }
         }
     }
@@ -96,10 +163,7 @@ public class HumanController : MonoBehaviour
     {
         transform.LookAt(playerTransform);
 
-        if (anim)
-        {
-            anim.SetBool("IsRunning", false);
-        }
+        if (anim) anim.SetBool("IsRunning", false);
 
         if (Time.time >= nextAttackTime)
         {
@@ -110,7 +174,6 @@ public class HumanController : MonoBehaviour
 
     void Shoot()
     {
-        // Logic สร้างกระสุนวิ่งเข้าหา Player
         Debug.Log("Soldier Shooting!");
         if (data.projectilePrefab != null)
         {
@@ -121,34 +184,92 @@ public class HumanController : MonoBehaviour
         // SwarmManager.Instance.RemoveZombie(); 
     }
 
-    void ChangeLaneRandomly()
+    IEnumerator JumpRoutine()
     {
-        // สุ่มเลนซ้ายขวา แต่ไม่ให้ออกนอกขอบ (0-2)
-        int direction = Random.Range(0, 2) == 0 ? -1 : 1;
-        int target = currentLane + direction;
+        isJumping = true;
+        if (anim) anim.SetTrigger("Jump");
 
+        float timer = 0;
+        float startY = transform.position.y;
+
+        while (timer < jumpDuration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / jumpDuration;
+
+            verticalVelocityY = startY + (4 * jumpHeight * progress * (1 - progress));
+
+            yield return null;
+        }
+
+        verticalVelocityY = startY; 
+        isJumping = false;
+    }
+
+    void FindSafeLane()
+    {
+        bool isLeftSafe = IsLaneSafe(currentLane - 1);
+        bool isRightSafe = IsLaneSafe(currentLane + 1);
+
+        if (isLeftSafe && isRightSafe)
+        {
+            ChangeLane(Random.Range(0, 2) == 0 ? -1 : 1);
+        }
+        else if (isRightSafe)
+        {
+            ChangeLane(1);
+        }
+        else if (isLeftSafe)
+        {
+            ChangeLane(-1);
+        }
+    }
+
+
+    bool IsLaneSafe(int targetLaneIndex)
+    {
+        if (targetLaneIndex < 0 || targetLaneIndex > 2) return false;
+        if (GameManager.Instance == null) return false;
+
+        float laneX = (targetLaneIndex - 1) * GameManager.Instance.laneDistance;
+        Vector3 rayOrigin = new Vector3(laneX, transform.position.y + 0.5f, transform.position.z);
+        
+        Debug.DrawRay(rayOrigin, Vector3.forward * laneCheckDistance, Color.blueViolet, 10.0f);
+
+        if (Physics.Raycast(rayOrigin, Vector3.forward, laneCheckDistance, obstacleLayer, QueryTriggerInteraction.Collide))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    void ChangeLane(int direction)
+    {
+        int target = currentLane + direction;
         if (target >= 0 && target <= 2)
         {
             currentLane = target;
         }
     }
 
+
     public void OnEaten()
     {
+        isDead = true;
         if (anim) anim.SetTrigger("Dead");
-        // Logic การตายและเพิ่มจำนวนซอมบี้
-        // SwarmManager.Instance.AddZombie(data.zombieValue);
-        Destroy(gameObject, 1f); // รอเล่นท่าตายจบแป๊บนึง
+
+        if (data.bloodEffectPrefab != null)
+        {
+            Vector3 bloodPos = transform.position + Vector3.up * 1.0f;
+            GameObject blood = Instantiate(data.bloodEffectPrefab, bloodPos, Quaternion.identity);
+            Destroy(blood, 2f);
+        }
+
+        Collider col = GetComponent<Collider>();
+        if (col) col.enabled = false;
+
+        Destroy(gameObject, 2f);
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    // ถ้าโดนซอมบี้ชน
-    //    if (other.CompareTag("Zombie"))
-    //    {
-    //        // ปิด Collider กันชนซ้ำ
-    //        GetComponent<Collider>().enabled = false;
-    //        OnEaten();
-    //    }
-    //}
 }

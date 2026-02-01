@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb21cbdb7d561dc4b8dad82a13bea0ff, type: 3}
+  m_Name: RunnerMattData
+  m_EditorClassIdentifier: Assembly-CSharp::HumanData
+  type: 1
+  moveSpeed: 5
+  detectRange: 15
+  attackRate: 1
+  zombieValue: 1
+  projectilePrefab: {fileID: 0}
+  bloodEffectPrefab: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}

@@ -193,7 +193,16 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Human"))
         {
             SwarmManager.Instance.AddZombie();
-            Destroy(other.gameObject);
+            HumanController human = other.GetComponent<HumanController>();
+            if (human != null)
+            {
+                human.OnEaten();
+            }
+            else
+            {
+                Destroy(other.gameObject);
+            }
+
         }
         else if (other.CompareTag("Obstacle"))
         {

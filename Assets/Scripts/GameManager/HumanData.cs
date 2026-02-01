@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewHumanData", menuName = "Game/Human Data")]
 public class HumanData : ScriptableObject
 {
-    public enum HumanType { Civilian, Police, Soldier}
+    public enum HumanType { Civilian, Runner, Soldier}
     public HumanType type;
 
     [Header("Stats")]
@@ -12,5 +12,8 @@ public class HumanData : ScriptableObject
     public float attackRate = 1f;
     public int zombieValue = 1;
     public GameObject projectilePrefab;
+
+    [Header("VFX")]
+    public GameObject bloodEffectPrefab;
 
 }

@@ -19,7 +19,7 @@ public class ZombieController : MonoBehaviour
             anim.runtimeAnimatorController = data.overrideController;
         }
 
-        if (anim) anim.Play("CharacterArmature|Run_Arms", 0, Random.Range(0f, 1f));
+        if (anim) anim.Play("Run_Arms", 0, Random.Range(0f, 1f));
     }
 
     public void UpdatePosition(Vector3 targetPos, Quaternion targetRot, float smoothTime, float maxSpeed)
