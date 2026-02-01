@@ -1045,7 +1045,7 @@ MonoBehaviour:
   playerAnimator: {fileID: 420590341}
   maxEnergy: 100
   currentEnergy: 0
-  energyDepletionRate: 1
+  energyDepletionRate: 2
   forwardSpeed: 10
   laneChangeSmoothTime: 0.15
   maxLaneSpeed: 20
@@ -1989,8 +1989,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrackManager
   roadPrefabs:
-  - {fileID: 6811262986891258837, guid: a1710487f816ee3488a80bfebe651308, type: 3}
-  - {fileID: 2294177266031702103, guid: d1db62fd263da774f868783bd722236a, type: 3}
+  - {fileID: 8740426242455166139, guid: df411062a3637c449923a831a28380e6, type: 3}
+  - {fileID: 8740426242455166139, guid: e0159f30557549e4a9479472ef1d9fcc, type: 3}
+  - {fileID: 8740426242455166139, guid: 8e705ac04d1c26b4f93ffb35c7735f84, type: 3}
+  - {fileID: 8740426242455166139, guid: c08ba36a5fb0e2646a219d4fa0b8e67a, type: 3}
+  - {fileID: 8740426242455166139, guid: d2d7f9c2f6009a148ab79460cfe13e38, type: 3}
+  - {fileID: 8740426242455166139, guid: 0e2eae3c4b99f5e45bc90fcdd26b1797, type: 3}
+  - {fileID: 8740426242455166139, guid: 0723d7f725c24df4999394c3e7315196, type: 3}
+  - {fileID: 8740426242455166139, guid: 9515a1171cee2bc42acbc9db215cdcf6, type: 3}
+  - {fileID: 8740426242455166139, guid: 1413ec911092a454289a437e10afe04f, type: 3}
+  - {fileID: 8740426242455166139, guid: 3a760841af062e7449ce8941e4c7387b, type: 3}
   playerTranform: {fileID: 420590340}
 --- !u!1 &1186382724
 GameObject:
