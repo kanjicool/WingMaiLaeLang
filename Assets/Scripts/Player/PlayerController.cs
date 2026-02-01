@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     public bool isX2Active = false;
     public bool isInvincible = false;
     public float powerUpDuration = 5f;
+    public bool isSpeedBoosted = false;
+    public bool isSlowDrainActive = false;
 
     [Header("Start Settings")]
     public int startLane = 1;
@@ -56,6 +58,8 @@ public class PlayerController : MonoBehaviour
     // References
     private CharacterController controller;
     private GameControls controls;
+
+    public bool isX2Warning, isInvinWarning, isSpeedWarning, isSlowWarning;
 
     void Awake()
     {
@@ -243,20 +247,30 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator PowerUpRoutine(string itemType)
     {
+        float warnTime = 1.5f; // จะเริ่มกระพริบก่อนหมด 1.5 วินาที
+
+        // --- เริ่มต้นใช้งาน Buff ---
         if (itemType == "x2") isX2Active = true;
         else if (itemType == "Invincible") isInvincible = true;
-        else if (itemType == "Speed") forwardSpeed += 5f;
-        else if (itemType == "SlowDrain") energyDepletionRate -= 0.5f;
-        {
-            
-        }
+        else if (itemType == "Speed") { forwardSpeed += 5f; isSpeedBoosted = true; }
+        else if (itemType == "SlowDrain") { energyDepletionRate -= 0.5f; isSlowDrainActive = true; }
 
-        yield return new WaitForSeconds(powerUpDuration);
+        // รอจนถึงช่วงใกล้หมด
+        yield return new WaitForSeconds(powerUpDuration - warnTime);
 
-        if (itemType == "x2") isX2Active = false;
-        else if (itemType == "Invincible") isInvincible = false;
-        else if (itemType == "Speed") forwardSpeed -= 5f;
-        else if (itemType == "SlowDrain") energyDepletionRate += 0.5f;
+        // --- เริ่มสถานะ Warning ---
+        if (itemType == "x2") isX2Warning = true;
+        else if (itemType == "Invincible") isInvinWarning = true;
+        else if (itemType == "Speed") isSpeedWarning = true;
+        else if (itemType == "SlowDrain") isSlowWarning = true;
+
+        yield return new WaitForSeconds(warnTime);
+
+        // --- ปิด Buff และ Warning ---
+        if (itemType == "x2") { isX2Active = false; isX2Warning = false; }
+        else if (itemType == "Invincible") { isInvincible = false; isInvinWarning = false; }
+        else if (itemType == "Speed") { forwardSpeed -= 5f; isSpeedBoosted = false; isSpeedWarning = false; }
+        else if (itemType == "SlowDrain") { energyDepletionRate += 0.5f; isSlowDrainActive = false; isSlowWarning = false; }
     }
 
     private void ChangeLane(int direction)
