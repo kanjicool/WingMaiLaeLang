@@ -19,3 +19,7 @@ MonoBehaviour:
   zombieValue: 3
   projectilePrefab: {fileID: 7323082005757754344, guid: 08d22c92dabd20e4297e2cd044b19af6, type: 3}
   bloodEffectPrefab: {fileID: 4553287630450876385, guid: 15483e51212e3d74886ea57291f4639a, type: 3}
+  screamSound: {fileID: 8300000, guid: 914eacf520a6617428e733dd2925e767, type: 3}
+  deathSound: {fileID: 8300000, guid: 0ad47f05d39db664484a0371d782dc7a, type: 3}
+  shootSound: {fileID: 8300000, guid: 823f46185cae2ed4b889ffd6f87c2cf0, type: 3}
+  volume: 0.9

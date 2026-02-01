@@ -18,5 +18,12 @@ MonoBehaviour:
   followSpeed: 15
   gapDistance: 0.8
   spawnWeight: 80
+  spawnSounds:
+  - {fileID: 8300000, guid: c69ba2ba25f712e409b0d5b629524ffe, type: 3}
+  ambientSounds:
+  - {fileID: 8300000, guid: e1d3535966491254fafedd0bf290336a, type: 3}
+  deathSounds:
+  - {fileID: 8300000, guid: bed53bc76bc944946a7260c1cba992ad, type: 3}
+  volume: 0.3
   isTank: 0
   isRunner: 0

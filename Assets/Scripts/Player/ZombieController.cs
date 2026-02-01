@@ -1,5 +1,7 @@
 using UnityEngine;
+using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class ZombieController : MonoBehaviour
 {
     private Animator anim;
@@ -8,6 +10,7 @@ public class ZombieController : MonoBehaviour
     [HideInInspector] public Vector3 currentVelocity;
 
     private ZombieData myData;
+    private AudioSource audioSource;
 
     public void Initialize(ZombieData data)
     {
@@ -20,6 +23,50 @@ public class ZombieController : MonoBehaviour
         }
 
         if (anim) anim.Play("Run_Arms", 0, Random.Range(0f, 1f));
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.spatialBlend = 1.0f; // ปรับเป็น 3D Sound (ไกลเบา ใกล้ดัง)
+        audioSource.volume = myData.volume;
+
+        // 1. เล่นเสียงเกิด (Spawn)
+        PlayRandomSound(myData.spawnSounds);
+
+        // 2. เริ่มวนลูปเสียงร้องรำคาญ (Ambient)
+        StartCoroutine(AmbientSoundRoutine());
+    }
+
+    IEnumerator AmbientSoundRoutine()
+    {
+        while (true)
+        {
+            // รอเวลาสุ่ม (เช่น ทุกๆ 3 ถึง 8 วินาที ร้องทีนึง)
+            float waitTime = Random.Range(3.0f, 8.0f);
+            yield return new WaitForSeconds(waitTime);
+
+            // เล่นเสียง
+            PlayRandomSound(myData.ambientSounds);
+        }
+    }
+
+    void PlayRandomSound(AudioClip[] clips)
+    {
+        if (clips != null && clips.Length > 0 && audioSource != null)
+        {
+            // สุ่มมา 1 เสียง
+            AudioClip clip = clips[Random.Range(0, clips.Length)];
+            // ใช้ PlayOneShot เพื่อให้เสียงซ้อนกันได้
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlayDeathSound()
+    {
+        if (myData.deathSounds != null && myData.deathSounds.Length > 0)
+        {
+            AudioClip clip = myData.deathSounds[Random.Range(0, myData.deathSounds.Length)];
+            // สร้างลำโพงชั่วคราว ณ จุดที่ตาย
+            AudioSource.PlayClipAtPoint(clip, transform.position, myData.volume);
+        }
     }
 
     public void UpdatePosition(Vector3 targetPos, Quaternion targetRot, float smoothTime, float maxSpeed)

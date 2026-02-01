@@ -4,6 +4,7 @@ using System.Collections;
 using TMPro.Examples;
 using UnityEngine.Playables;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -38,9 +39,14 @@ public class GameManager : MonoBehaviour
 
 
 
+    [Header("Audio Settings")]
+    public AudioClip countdownClip;
+    private AudioSource sfxSource;  
+
     private void Awake()
     {
         Instance = this;
+        sfxSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -73,6 +79,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerator StartCountdownRoutine()
     {
+        if (sfxSource != null && countdownClip != null)
+        {
+            sfxSource.PlayOneShot(countdownClip);
+        }
+
         if (countdownText != null)
         {
             countdownText.gameObject.SetActive(true);
@@ -86,6 +97,11 @@ public class GameManager : MonoBehaviour
         }
 
         StartGame();
+
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.StartPlaylist();
+        }
 
         if (countdownText != null)
         {

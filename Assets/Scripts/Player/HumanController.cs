@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class HumanController : MonoBehaviour
 {
     [Header("Settings")]
     public HumanData data;
     private Animator anim;
+    private AudioSource audioSource;
 
     [Header("Lane Settings")]
     public float laneChangeSmoothTime = 0.15f;
@@ -55,6 +57,11 @@ public class HumanController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0, 180, 0);
 
+        // --- Setup Audio ---
+        audioSource = GetComponent<AudioSource>();
+        audioSource.spatialBlend = 1.0f;
+        audioSource.volume = data.volume;
+
     }
 
     public void SetupLane(int laneIndex)
@@ -94,8 +101,13 @@ public class HumanController : MonoBehaviour
 
 
         float distanceToPlayer = transform.position.z - playerTransform.position.z;
-        if (distanceToPlayer < data.detectRange && distanceToPlayer > 0) isActive = true;
-        
+
+        if (!isActive && distanceToPlayer < data.detectRange && distanceToPlayer > 0)
+        {
+            isActive = true;
+            PlayScreamSound(); // เล่นเสียงตกใจ
+        }
+
         if (!isActive)
         {
             Vector3 directionToPlayer = playerTransform.position - transform.position;
@@ -210,6 +222,11 @@ public class HumanController : MonoBehaviour
     {
         Debug.Log("Soldier Shooting!");
 
+        if (data.shootSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(data.shootSound);
+        }
+
         if (data.projectilePrefab != null)
         {
             // aimbot
@@ -299,6 +316,12 @@ public class HumanController : MonoBehaviour
 
         if (anim) anim.SetTrigger("Dead");
 
+        if (data.deathSound != null)
+        {
+            // ใช้ PlayClipAtPoint เพราะเดี๋ยวตัวนี้จะโดน Destroy เสียงจะได้ไม่ขาดหาย
+            AudioSource.PlayClipAtPoint(data.deathSound, transform.position, data.volume);
+        }
+
         if (data.bloodEffectPrefab != null)
         {
             Vector3 bloodPos = transform.position + Vector3.up * 1.0f;
@@ -360,5 +383,14 @@ public class HumanController : MonoBehaviour
         Destroy(gameObject);
     }
 
+
+    void PlayScreamSound()
+    {
+        if (data.screamSound != null && audioSource != null)
+        {
+            // ใช้ PlayOneShot เพื่อไม่ให้ตัดเสียงอื่นที่อาจเล่นอยู่
+            audioSource.PlayOneShot(data.screamSound);
+        }
+    }
 
 }

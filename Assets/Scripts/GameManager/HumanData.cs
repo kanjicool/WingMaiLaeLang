@@ -16,4 +16,10 @@ public class HumanData : ScriptableObject
     [Header("VFX")]
     public GameObject bloodEffectPrefab;
 
+    [Header("Audio")]
+    public AudioClip screamSound; // เสียงตกใจ (กรี๊ด/ตะโกน) ตอนเห็นเรา
+    public AudioClip deathSound;  // เสียงตอนโดนกิน
+    public AudioClip shootSound;  // เสียงปืน (สำหรับ Soldier)
+    [Range(0f, 1f)] public float volume = 1.0f;
+
 }

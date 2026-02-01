@@ -189,6 +189,8 @@ public class SwarmManager : MonoBehaviour
             Destroy(vfx, 2.0f);
         }
 
+        targetZombie.PlayDeathSound();
+
         zombies.Remove(targetZombie);
         Destroy(targetZombie.gameObject);
     }
