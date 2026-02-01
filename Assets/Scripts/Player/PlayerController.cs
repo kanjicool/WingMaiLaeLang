@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     [Header("Energy Settings")]
     public float maxEnergy = 100f;
     public float currentEnergy;
-    public float energyDepletionRate = 0.1f;
+    public float energyDepletionRate = 1f;
 
     [Header("Movement Settings")]
     public float forwardSpeed = 10f;
@@ -202,6 +202,10 @@ public class PlayerController : MonoBehaviour
         {
             SwarmManager.Instance.AddZombie();
             HumanController human = other.GetComponent<HumanController>();
+
+            float energyRecoveryAmount = 10f; 
+            AddEnergy(energyRecoveryAmount);
+
             if (human != null)
             {
                 human.OnEaten();
@@ -240,12 +244,17 @@ public class PlayerController : MonoBehaviour
         if (itemType == "x2") isX2Active = true;
         else if (itemType == "Invincible") isInvincible = true;
         else if (itemType == "Speed") forwardSpeed += 5f;
+        else if (itemType == "SlowDrain") energyDepletionRate -= 0.5f;
+        {
+            
+        }
 
         yield return new WaitForSeconds(powerUpDuration);
 
         if (itemType == "x2") isX2Active = false;
         else if (itemType == "Invincible") isInvincible = false;
         else if (itemType == "Speed") forwardSpeed -= 5f;
+        else if (itemType == "SlowDrain") energyDepletionRate += 0.5f;
     }
 
     private void ChangeLane(int direction)
