@@ -1228,7 +1228,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   playerAnimator: {fileID: 2097665701}
   forwardSpeed: 10
-  laneDistance: 3
   laneChangeSmoothTime: 0.15
   maxLaneSpeed: 20
   rotationSpeed: 10
