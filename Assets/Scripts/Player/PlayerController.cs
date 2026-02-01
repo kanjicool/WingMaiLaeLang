@@ -237,6 +237,11 @@ public class PlayerController : MonoBehaviour
             float energyRecoveryAmount = 10f; 
             AddEnergy(energyRecoveryAmount);
 
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(50);
+            }
+
             if (human == null) human = other.GetComponentInParent<HumanController>();
 
             if (human != null)
@@ -252,6 +257,11 @@ public class PlayerController : MonoBehaviour
         else if (other.CompareTag("Obstacle"))
         {
             // 1. ถ้าอมตะอยู่ (Invincible) ไม่ต้องทำอะไรเลย เดินทะลุได้เลย
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(100);
+            }
+
             if (isInvincible)
             {
                 Debug.Log("Invincible: Walking through obstacle!");
