@@ -9,6 +9,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Animation")]
     public Animator playerAnimator;
+    
+    [Header("Energy Settings")]
+    public float maxEnergy = 100f;
+    public float currentEnergy;
+    public float energyDepletionRate = 0.1f;
 
     [Header("Movement Settings")]
     public float forwardSpeed = 10f;
@@ -66,6 +71,7 @@ public class PlayerController : MonoBehaviour
      
     void Start()
     {
+        currentEnergy = maxEnergy;
         ResetPlayerPosition();
     }
 
@@ -154,6 +160,8 @@ public class PlayerController : MonoBehaviour
         }
 
         if (!isGameActive) return;
+
+        DepleteEnergy();
 
         // Gravity
         if (controller.isGrounded && verticalVelocity.y < 0)
@@ -256,4 +264,30 @@ public class PlayerController : MonoBehaviour
         controller.center = originalCenter;
         isSliding = false;
     }
+
+    private void DepleteEnergy()
+    {
+        if (currentEnergy > 0)
+        {
+            currentEnergy -= energyDepletionRate * Time.deltaTime;
+        }
+        else
+        {
+            currentEnergy = 0;
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        isGameActive = false;
+        Debug.Log("Energy Depleted! Game Over");
+        // ใส่ Logic จบเกมของคุณตรงนี้ เช่น แสดง Pop-up หรือหยุดการเคลื่อนที่
+    }
+
+    public void AddEnergy(float amount)
+    {
+        currentEnergy = Mathf.Clamp(currentEnergy + amount, 0, maxEnergy);
+    }
+
 }
