@@ -26,8 +26,17 @@ public class GameManager : MonoBehaviour
     [Header("Game Loop")]
     public bool isGameOver = false;
 
-    [Header("UI Game Over")] // ใส่หัวข้อให้หาง่ายๆ
-    public GameObject gameOverPanel; // <--- บรรทัดสำคัญที่ขาดไป!
+    [Header("UI Game Over")]
+    public GameObject gameOverPanel;
+
+    [Header("Score Settings")]
+    public TextMeshProUGUI scoreText; // ลาก TextMeshPro ใส่ช่องนี้
+    public TextMeshProUGUI highScoreText; // (Optional) ใส่ช่องนี้ถ้ามี HighScore
+
+    private float score;
+    private float scoreMultiplier = 5f; // ความเร็วในการขึ้นของคะแนนวิ่ง
+
+
 
     private void Awake()
     {
@@ -93,7 +102,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("GAME OVER - All Zombies Dead");
 
         StopAllCoroutines();
-
+        CheckHighScore();
         // --- ส่วนที่ต้องเพิ่มเข้าไปครับ ---
         if (gameOverPanel != null)
         {
@@ -128,7 +137,56 @@ public class GameManager : MonoBehaviour
     }
 
     void Update()
-    { 
-        
+    {
+        if (player.isGameActive && !isGameOver)
+        {
+            // คะแนนขึ้นตามเวลา x ความเร็ว
+            score += scoreMultiplier * Time.deltaTime;
+
+            // ถ้ามีไอเทม x2 ให้คูณเพิ่ม (ต้องไปดึงค่า isX2Active จาก Player มาเช็ค)
+            if (player.isX2Active)
+            {
+                score += scoreMultiplier * Time.deltaTime; // บวกเพิ่มอีกเท่าตัว
+            }
+
+            UpdateScoreUI();
+        }
     }
+
+    // ฟังก์ชันสำหรับเรียกจากที่อื่นเพื่อบวกคะแนน (กินคน/เก็บของ)
+    public void AddScore(int amount)
+    {
+        // ถ้ามี x2 ให้ได้คะแนนพิเศษเบิ้ลด้วย
+        if (player.isX2Active) amount *= 2;
+
+        score += amount;
+        UpdateScoreUI();
+    }
+
+    void UpdateScoreUI()
+    {
+        if (scoreText != null)
+        {
+            // (int)score คือตัดทศนิยมทิ้ง
+            scoreText.text = "Score: " + (int)score;
+        }
+    }
+
+    // เรียกใช้ตอนจบเกมเพื่อบันทึก HighScore
+    public void CheckHighScore()
+    {
+        float currentHighScore = PlayerPrefs.GetFloat("HighScore", 0);
+        if (score > currentHighScore)
+        {
+            PlayerPrefs.SetFloat("HighScore", score);
+            PlayerPrefs.Save();
+            if (highScoreText != null) highScoreText.text = "New Best: " + (int)score;
+        }
+        else
+        {
+            if (highScoreText != null) highScoreText.text = "Best: " + (int)currentHighScore;
+        }
+    }
+
+    // อย่าลืมเรียก CheckHighScore() ในฟังก์ชัน TriggerGameOver() ของคุณด้วย!
 }
