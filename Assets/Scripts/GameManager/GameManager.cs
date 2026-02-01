@@ -119,6 +119,12 @@ public class GameManager : MonoBehaviour
 
         StopAllCoroutines();
         CheckHighScore();
+
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.StopMusic(); // เรียกฟังก์ชัน StopMusic ที่เราเขียนไว้
+        }
+
         // --- ส่วนที่ต้องเพิ่มเข้าไปครับ ---
         if (gameOverPanel != null)
         {

@@ -2142,7 +2142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrackManager
   roadPrefabs:
-  - {fileID: 2294177266031702103, guid: 0f11bc93f70cb1d43a96d54d3bb5f368, type: 3}
+  - {fileID: 2294177266031702103, guid: d1db62fd263da774f868783bd722236a, type: 3}
   playerTranform: {fileID: 420590340}
 --- !u!1 &1186382724
 GameObject:
@@ -3017,6 +3017,8 @@ MonoBehaviour:
   introDuration: 3
   isGameOver: 0
   gameOverPanel: {fileID: 55052341}
+  scoreText: {fileID: 0}
+  highScoreText: {fileID: 0}
   countdownClip: {fileID: 8300000, guid: 07befaac40ab100458d0a213116460d5, type: 3}
 --- !u!4 &1706459581
 Transform:
